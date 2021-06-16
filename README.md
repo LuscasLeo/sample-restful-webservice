@@ -13,7 +13,7 @@
 
 -   Adicionar Linter de commit ([Husky](https://typicode.github.io/husky/#/))
 
--   Adicionar Teste Unitário
+-   Adicionar Exemplos de Teste Unitário
 
 ## Instalação
 
@@ -32,3 +32,7 @@ Também é possivel depurar o projeto com VSCode Debug. Pressione F5 ou acesse a
 ## Build com docker
 
     $ docker build . -t {nome da imagem}
+
+## Swagger Docs
+
+Por padrão, você pode acessar a documentação auto gerada através da rota /docs
