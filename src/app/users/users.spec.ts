@@ -1,37 +1,20 @@
+import { createConnection } from "typeorm";
+import { User } from "../../database/entity/User";
 import UserController from "./user.controller";
 import UserService from "./user.service";
-import { Repository, SelectQueryBuilder } from "typeorm";
-import { mock } from "jest-mock-extended";
 
 describe("UserController", () => {
     it("Shout be okay", async () => {
-        jest.mock("typeorm", () => {
-            const repositoryMock = mock<Repository<any>>();
-            const qbuilderMock = mock<SelectQueryBuilder<any>>();
-            qbuilderMock.where.mockReturnThis();
-            qbuilderMock.select.mockReturnThis();
-            repositoryMock.createQueryBuilder.mockReturnValue(qbuilderMock);
-
-            return {
-                getRepository: () => repositoryMock,
-
-                BaseEntity: class Mock {},
-                ObjectType: () => {},
-                Entity: () => {},
-                InputType: () => {},
-                Index: () => {},
-                PrimaryGeneratedColumn: () => {},
-                Column: () => {},
-                CreateDateColumn: () => {},
-                UpdateDateColumn: () => {},
-                OneToMany: () => {},
-                ManyToOne: () => {},
-            };
+        const connection = await createConnection({
+            type: "sqlite",
+            database: ":memory:",
+            entities: ["src/database/entity/**/*.ts"],
+            synchronize: true,
         });
 
-        const repository = require("typeorm").getRepository();
-        const userController = new UserController(new UserService(repository), repository);
+        const repository = connection.getRepository(User);
 
-        expect(userController.getAll()).toBeInstanceOf("array");
+        const userController = new UserController(new UserService(repository), repository);
+        const a = await userController.getAll({ limit: 100, offset: 0, order: "DESC", sort: "name" });
     });
 });

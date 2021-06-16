@@ -5,6 +5,7 @@ import { Service } from "typedi";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { User } from "../../database/entity/User";
+import { IndexInput } from "../../utils/inputs";
 import AuthenticationMiddleware from "../middlewares/authentication.middleware";
 import UserService from "./user.service";
 
@@ -16,10 +17,12 @@ class UserInput {
     password: string;
 }
 
+class UserIndexInput extends IndexInput<UserInput> {}
+
 @OpenAPI({
     security: [
         {
-            bearerToken: [],
+            bearerToken: [""],
         },
     ],
 })
@@ -29,9 +32,14 @@ class UserInput {
 export default class UserController {
     constructor(private usersService: UserService, @InjectRepository(User) private userRepo: Repository<User>) {}
 
-    @Get()
-    async getAll() {
-        return await this.userRepo.find();
+    @Get("/", { transformRequest: true })
+    async getAll(@Body({ required: true, validate: true }) query: UserIndexInput) {
+        return query;
+        // return await this.userRepo.find({
+        //     order: {
+        //         id: "ASC",
+        //     },
+        // });
     }
 
     @Get("/:id")
