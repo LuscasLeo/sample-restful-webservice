@@ -1,17 +1,11 @@
 const { SnakeNamingStrategy } = require("typeorm-naming-strategies");
+const ormData = require("./ormconfig_js");
 
 /**
  * @type import('typeorm').ConnectionOptions
  */
 module.exports = {
-    type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: "postgres",
-    password: "donttouch",
-    database: "teste_di",
-    synchronize: false,
-    logging: true,
+    ...ormData,
     entities: ["src/database/entity/**/*.ts"],
     migrations: ["src/database/migration/**/*.ts"],
     cli: {
@@ -19,5 +13,4 @@ module.exports = {
         migrationsDir: "src/database/migration",
         subscribersDir: "src/database/subscriber",
     },
-    namingStrategy: new SnakeNamingStrategy(),
 };
